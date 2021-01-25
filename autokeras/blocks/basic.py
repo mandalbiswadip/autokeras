@@ -841,7 +841,6 @@ class Embedding(block_module.Block):
         )
         return cls(**config)
 
-
     def build(self, hp, inputs=None):
         input_node = nest.flatten(inputs)[0]
         # TODO: support more pretrained embedding layers.
