@@ -805,7 +805,11 @@ class Embedding(block_module.Block):
         )
         self.dropout = utils.get_hyperparameter(
             dropout,
-            hyperparameters.Choice("dropout", [0.0, 0.25, 0.5], default=0.0),
+            hyperparameters.Choice(
+                "dropout",
+                [0.0, 0.25, 0.5],
+                default=0.0
+            ),
             float
         )
 
@@ -814,9 +818,12 @@ class Embedding(block_module.Block):
         config.update(
             {
                 "max_features": self.max_features,
-                "pretraining": hyperparameters.serialize(self.pretraining),
-                "embedding_dim": hyperparameters.serialize(self.embedding_dim),
-                "dropout": hyperparameters.serialize(self.dropout)
+                "pretraining": hyperparameters.serialize(
+                    self.pretraining),
+                "embedding_dim": hyperparameters.serialize(
+                    self.embedding_dim),
+                "dropout": hyperparameters.serialize(
+                    self.dropout)
             }
         )
         return config
@@ -850,13 +857,15 @@ class Embedding(block_module.Block):
             # weights=[embedding_matrix])
         else:
             layer = layers.Embedding(
-                input_dim=self.max_features, output_dim=utils.add_to_hp(self.embedding_dim, hp)
+                input_dim=self.max_features, output_dim=utils.add_to_hp(
+                    self.embedding_dim, hp)
             )
             # input_length=input_node.shape[1],
             # trainable=True)
         output_node = layer(input_node)
         if utils.add_to_hp(self.dropout, hp) > 0:
-            output_node = layers.Dropout(utils.add_to_hp(self.dropout, hp))(output_node)
+            output_node = layers.Dropout(
+                utils.add_to_hp(self.dropout, hp))(output_node)
         return output_node
 
 
