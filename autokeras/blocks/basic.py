@@ -790,27 +790,21 @@ class Embedding(block_module.Block):
             hyperparameters.Choice(
                 "pretraining",
                 ["random", "glove", "fasttext", "word2vec", "none"],
-                default="none"
+                default="none",
             ),
-            str
+            str,
         )
         self.embedding_dim = utils.get_hyperparameter(
             embedding_dim,
             hyperparameters.Choice(
-                "embedding_dim",
-                [32, 64, 128, 256, 512],
-                default=128
+                "embedding_dim", [32, 64, 128, 256, 512], default=128
             ),
-            int
+            int,
         )
         self.dropout = utils.get_hyperparameter(
             dropout,
-            hyperparameters.Choice(
-                "dropout",
-                [0.0, 0.25, 0.5],
-                default=0.0
-            ),
-            float
+            hyperparameters.Choice("dropout", [0.0, 0.25, 0.5], default=0.0),
+            float,
         )
 
     def get_config(self):
@@ -818,27 +812,20 @@ class Embedding(block_module.Block):
         config.update(
             {
                 "max_features": self.max_features,
-                "pretraining": hyperparameters.serialize(
-                    self.pretraining),
-                "embedding_dim": hyperparameters.serialize(
-                    self.embedding_dim),
-                "dropout": hyperparameters.serialize(
-                    self.dropout)
+                "pretraining": hyperparameters.serialize(self.pretraining),
+                "embedding_dim": hyperparameters.serialize(self.embedding_dim),
+                "dropout": hyperparameters.serialize(self.dropout),
             }
         )
         return config
 
     @classmethod
     def from_config(cls, config):
-        config["pretraining"] = hyperparameters.deserialize(
-            config["pretraining"]
-        )
+        config["pretraining"] = hyperparameters.deserialize(config["pretraining"])
         config["embedding_dim"] = hyperparameters.deserialize(
             config["embedding_dim"]
         )
-        config["dropout"] = hyperparameters.deserialize(
-            config["dropout"]
-        )
+        config["dropout"] = hyperparameters.deserialize(config["dropout"])
         return cls(**config)
 
     def build(self, hp, inputs=None):
@@ -850,21 +837,22 @@ class Embedding(block_module.Block):
             layer = layers.Embedding(
                 input_dim=self.max_features,
                 output_dim=utils.add_to_hp(self.embedding_dim, hp),
-                input_length=input_node.shape[1]
+                input_length=input_node.shape[1],
             )
             # trainable=False,
             # weights=[embedding_matrix])
         else:
             layer = layers.Embedding(
-                input_dim=self.max_features, output_dim=utils.add_to_hp(
-                    self.embedding_dim, hp)
+                input_dim=self.max_features,
+                output_dim=utils.add_to_hp(self.embedding_dim, hp),
             )
             # input_length=input_node.shape[1],
             # trainable=True)
         output_node = layer(input_node)
         if utils.add_to_hp(self.dropout, hp) > 0:
-            output_node = layers.Dropout(
-                utils.add_to_hp(self.dropout, hp))(output_node)
+            output_node = layers.Dropout(utils.add_to_hp(self.dropout, hp))(
+                output_node
+            )
         return output_node
 
 
